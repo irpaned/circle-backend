@@ -38,7 +38,7 @@
   },
   "scripts": {
     "start": "nodemon src/index.ts",
-    "postinstall": "prisma generate && prisma migrate deploy",
+    "postinstall": "prisma generate",
     "dev": "nodemon src/index.ts",
     "build": "tsc && prisma generate",
     "swagger": "node swagger/swagger.js"
