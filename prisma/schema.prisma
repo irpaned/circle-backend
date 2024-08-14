@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int     @id @default(autoincrement())
+  email           String  @unique // cuma boleh ada 1 jenis email
+  userName        String  @unique
+  fullName        String
+  password        String
+  photoProfile    String?
+  bio             String?
+  isVerified      Boolean @default(false)
+  isVerifiedEmail Boolean @default(false)
+
+  threads Thread[]
+  replies Reply[]
+  likes   Like[]
+
+  followeds Follow[] @relation(name: "followed")
+  followers Follow[] @relation(name: "follower")
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now()) @updatedAt
+
+  @@map("user") // ganti nama table
+}
+
+model Thread {
+  id      Int     @id @default(autoincrement())
+  content String
+  image   String?
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+
+  replies Reply[]
+  likes   Like[]
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  @@map("threads")
+}
+
+model Reply {
+  id Int @id @default(autoincrement())
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  thread   Thread? @relation(fields: [threadId], references: [id])
+  threadId Int?
+
+  image   String?
+  content String
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+
+  @@map("replies")
+}
+
+model Like {
+  id Int @id @default(autoincrement())
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  thread   Thread? @relation(fields: [threadId], references: [id])
+  threadId Int?
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+
+  @@map("likes")
+}
+
+model Follow {
+  id Int @id @default(autoincrement())
+
+  followed   User? @relation(name: "followed", fields: [followedId], references: [id])
+  followedId Int?
+
+  follower   User? @relation(name: "follower", fields: [followerId], references: [id])
+  followerId Int?
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+
+  @@map("follows")
+}
+
+model Verification {
+  id Int @id @default(autoincrement())
+
+  token String           @unique
+  type  VerificationType @default(EMAIL)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("verifications")
+}
+
+enum VerificationType {
+  FORGOT_PASSWORD
+  EMAIL
+}

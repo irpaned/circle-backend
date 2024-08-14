@@ -1,0 +1,6 @@
+folder Entity berhubungan dengan codingan 
+
+folder Migration berhubungan dengan databse untuk kita migrasi ke table
+
+data-source-ts berkaitan dengan configurasi dgn database, ubah username, password, dan database sesuai dgn milik kita
+
