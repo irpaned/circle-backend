@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "methods": ["GET", "POST",
+      "methods": ["GET", "POST"]
       "dest": "src/index.ts"
     }
   ]
