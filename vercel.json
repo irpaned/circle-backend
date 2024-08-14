@@ -9,11 +9,11 @@
   "routes": [
     {
       "src": "/(.*)",
-      "methods": ["GET", "POST"],
+      "methods": ["GET", "POST", "PATCH", "DELETE", "LISTEN"],
       "dest": "src/index.ts"
     }
   ],
-"headers": [
+  "headers": [
     {
       "source": "/(.*)",
       "headers": [
