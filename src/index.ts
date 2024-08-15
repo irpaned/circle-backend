@@ -38,7 +38,7 @@ const routerv2 = express.Router();
 
 app.use(
   cors({
-    origin: ["https://circle-six-delta.vercel.app/"],
+    origin: ["*"],
     methods: ["GET", "POST"],
   })
 );
