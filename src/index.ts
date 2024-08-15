@@ -36,12 +36,7 @@ const routerv2 = express.Router();
 
 // app.use(limiter); // ini ditaruh global jadi semua routing akan ada limitnya
 
-app.use(
-  cors({
-    origin: ["*"],
-    methods: ["GET", "POST"],
-  })
-);
+app.use(cors());
 app.use(express.json());
 app.use("/api/v1", routerv1);
 app.use("/api/v2", routerv2);
