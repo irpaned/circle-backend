@@ -13,18 +13,6 @@
       "methods": ["GET", "POST", "PATCH", "DELETE", "LISTEN"],
       "dest": "src/index.ts"
     }
-  ],
-"headers": [
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'none'; img-src 'self' https://circle-backend-theta.vercel.app; script-src 'self'; style-src 'self';"
-        }
-      ]
-    }
   ]
   
 }
