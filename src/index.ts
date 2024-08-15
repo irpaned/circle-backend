@@ -36,7 +36,12 @@ const routerv2 = express.Router();
 
 // app.use(limiter); // ini ditaruh global jadi semua routing akan ada limitnya
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://circle-six-delta.vercel.app/"],
+    methods: ["GET", "POST"],
+  })
+);
 app.use(express.json());
 app.use("/api/v1", routerv1);
 app.use("/api/v2", routerv2);
@@ -124,7 +129,6 @@ routerv1.post("/follow/:id", authenticate, UserController.follow);
 
 // AUTH
 routerv1.post("/auth/login", AuthController.login);
-
 routerv1.post("/auth/check", authenticate, AuthController.check);
 routerv1.post("/auth/register", AuthController.register);
 routerv1.post("/auth/reset-password", AuthController.resetPassword);
