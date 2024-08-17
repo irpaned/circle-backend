@@ -81,36 +81,8 @@ async function findManyProfile(userId: number) {
   }
 }
 
-// async function findCardImage(userId: number, image: string) {
-//   try {
-//     const data = await prisma.thread.findMany({
-//       where: { userId, image },
-//       include: {
-//         user: true,
-//         likes: true,
-//         replies: true,
-//       },
-//     });
-
-//     if (!thread) throw new String("Thread not found!");
-
-//     return data.map((thread) => {
-//       return {
-//         ...thread,
-//         TotalLikes: thread.likes.length,
-//         isLiked: thread.likes.some((like) => like.userId === userId),
-//         TotalReplies: thread.replies.length,
-//         isReplied: thread.replies.some((replies) => replies.userId === userId),
-//       };
-//     });
-//   } catch (error) {
-//     throw new String(error);
-//   }
-// }
-
 async function create(dto: CreateThreadDTO, userId: number) {
   try {
-    //   validasi menggunakan joi
     const validate = createThreadSchemaJoi.validate(dto);
 
     if (validate.error) {
@@ -127,7 +99,7 @@ async function create(dto: CreateThreadDTO, userId: number) {
       const upload = await cloudinary.uploader.upload(dto.image, {
         upload_preset: "b54circle",
       });
-      dto.image = upload.secure_url; // secure_url untuk apa?
+      dto.image = upload.secure_url;
     }
 
     return await prisma.thread.create({

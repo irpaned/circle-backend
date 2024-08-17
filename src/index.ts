@@ -121,6 +121,16 @@ routerv1.delete("/unlike/:id", authenticate, ThreadController.unlike);
 
 // FOLLOW
 routerv1.post("/follow/:id", authenticate, UserController.follow);
+routerv1.get(
+  "/get-followings/:id",
+  authenticate,
+  UserController.getDataFollowings
+);
+routerv1.get(
+  "/get-followers/:id",
+  authenticate,
+  UserController.getDataFollowers
+);
 
 // AUTH
 routerv1.post("/auth/login", AuthController.login);

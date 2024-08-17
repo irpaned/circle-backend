@@ -45,4 +45,53 @@ async function follow(followedId: number, followerId: number) {
   }
 }
 
-export default { follow };
+async function FindAllFollowings(userId: number) {
+  try {
+    return await prisma.user.findMany({
+      where: {
+        id: userId,
+      },
+      include: {
+        followers: {
+          select: {
+            id: true,
+            followed: {
+              select: {
+                id: true,
+                fullName: true,
+                userName: true,
+                photoProfile: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {}
+}
+
+async function FindAllFollowers(userId: number) {
+  try {
+    return await prisma.user.findMany({
+      where: {
+        id: userId,
+      },
+      include: {
+        followeds: {
+          select: {
+            id: true,
+            follower: {
+              select: {
+                id: true,
+                fullName: true,
+                userName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {}
+}
+
+export default { follow, FindAllFollowings, FindAllFollowers };

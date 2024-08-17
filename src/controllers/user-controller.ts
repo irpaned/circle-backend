@@ -87,18 +87,37 @@ async function follow(req: Request, res: Response) {
   }
 }
 
-// async function unfollow(req: Request, res: Response) {
-//   try {
-//     const user = res.locals.user;
-//     const { id } = req.params;
-//     const unfollow = await FollowService.follow(parseInt(id), user.id);
+async function getDataFollowings(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    // const user = res.locals.user;
+    const data = await FollowService.FindAllFollowings(Number(id));
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      message: error,
+    });
+  }
+}
 
-//     res.status(200).json(unfollow);
-//   } catch (error) {
-//     res.status(500).json({
-//       messahe: error,
-//     });
-//   }
-// }
+async function getDataFollowers(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    // const user = res.locals.user;
+    const data = await FollowService.FindAllFollowers(Number(id));
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      message: error,
+    });
+  }
+}
 
-export default { find, updateProfile, findOneProfile, follow };
+export default {
+  find,
+  updateProfile,
+  findOneProfile,
+  follow,
+  getDataFollowers,
+  getDataFollowings,
+};
