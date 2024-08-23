@@ -23,20 +23,7 @@ const port = process.env.PORT || 5000;
 const routerv1 = express.Router();
 const routerv2 = express.Router();
 
-// initializeRedisClient().then(() => {
-
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   limit: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-//   standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-//   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-//   // store: new RedisStore({
-//   //   sendCommand: (...args: string[]) => redisClient.sendCommand(args),
-//   }) // Redis, Memcached, etc. See below.
-
-// app.use(limiter); // ini ditaruh global jadi semua routing akan ada limitnya
-
-app.use(cors());
+app.use(cors()); //fungsi : agar frontend bisa terhubung ke backend
 app.use(express.json());
 app.use("/api/v1", routerv1);
 app.use("/api/v2", routerv2);
@@ -45,10 +32,8 @@ app.use(
   "/docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDoc, {
-    // ini untuk menampilkan searching
     explorer: true,
     swaggerOptions: {
-      // ini agar Authorization di swagger ga hilang ketika kita refresh
       persistAuthorization: true,
       displayRequestDuration: true,
     },
@@ -56,10 +41,6 @@ app.use(
 );
 
 app.get("/", async (req: Request, res: Response) => {
-  //
-  // redisClient.set("HELLO_WORLD", "hello")
-
-  // CONTOH PENGGUNAAN NODMAILER
   const info = await transporter.sendMail({
     from: '"Circle" <muhammadirfan2823@gmail.com>', // sender address
     to: "muhammadirfann6644@gmail.com", // list of receivers
@@ -82,14 +63,6 @@ routerv1.get(
   "/threads",
   authenticate,
   async (req: Request, res: Response, next: NextFunction) => {
-    // SET REDIS (STEP 1)
-    // ambil data threads dari cache redis
-    // const result = await redisClient.get("THREADS_DATA");
-
-    // kalau misalkan data threadsnya ada di cache redis, maka akan langsung di return, kalau gaada masuk ke next yg ada di bawah ini
-    // if (result) return res.json(JSON.parse(result));
-
-    // Apa fungsi next? apabila data threads nya tidak ada di cache dari redis, maka akan di lanjutkan ke ThreadController.find untuk ngambil data threadsnya
     next();
   },
   ThreadController.find
@@ -131,6 +104,11 @@ routerv1.get(
   authenticate,
   UserController.getDataFollowers
 );
+routerv1.get(
+  "/count-follow/:id",
+  authenticate,
+  UserController.CountDataFollowers
+);
 
 // AUTH
 routerv1.post("/auth/login", AuthController.login);
@@ -161,8 +139,3 @@ routerv2.get("/", (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`Server is running on PORT ${port}`);
 });
-// })
-
-// app.listen(port, () => {
-//   console.log(`Server is running on PORT ${port}`);
-// })

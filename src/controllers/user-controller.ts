@@ -113,6 +113,19 @@ async function getDataFollowers(req: Request, res: Response) {
   }
 }
 
+async function CountDataFollowers(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    // const user = res.locals.user;
+    const data = await FollowService.CountFollowing(Number(id));
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      message: error,
+    });
+  }
+}
+
 export default {
   find,
   updateProfile,
@@ -120,4 +133,5 @@ export default {
   follow,
   getDataFollowers,
   getDataFollowings,
+  CountDataFollowers,
 };
