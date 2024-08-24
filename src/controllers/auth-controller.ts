@@ -46,7 +46,6 @@ async function register(req: Request, res: Response) {
 
   try {
     const user = await AuthService.register(req.body);
-
     const token = jwt.sign(user.id.toString(), process.env.JWT_SECRET); // : eyskjfnskjfnskf
     const fullUrl = req.protocol + "://" + req.get("host");
 
@@ -54,12 +53,11 @@ async function register(req: Request, res: Response) {
       from: '"Circle" <muhammadirfan2823@gmail.com>', // sender address
       to: user.email, // list of receivers
       subject: "Verification Link", // Subject line
-      // html: `<a href="${fullUrl}/api/v1/auth/verify-email?token=${token}">Klik untuk verifikasi email!</a>`, // html body a
       html: `
       <div style="background-color: #FFF; margin: auto; width: 50%; text-align: center; padding: 1rem; border-radius: 12px; font-family: Arial, Helvetica, sans-serif; color: black;">
           <H1 style="color: #04A51E; font-weight: bold;">Circle App</H1>
           <p style="font-size: 0.8rem;">Welcome to Circle!<br> Click the button below to verify your account</p>
-          <Button style="background-color: #04A51E; border: none; border-radius: 12px; height: 40px; margin: 1rem;"><a style="text-decoration: none; color: white; margin: 0.5rem; font-size: 1rem;" href="${fullUrl}/api/v1/auth/verify-email?token=$${token}">Verify</a></Button>
+          <Button style="background-color: #04A51E; border: none; border-radius: 12px; height: 40px; margin: 1rem;"><a style="text-decoration: none; color: white; margin: 0.5rem; font-size: 1rem;" href="${fullUrl}/api/v1/auth/verify-email?token=${token}">Verify</a></Button>
           <p style="font-size: 0.8rem;">Please ignore this message if you feel that you are not registering to our services.</p>
           <p style="font-size: 0.8rem; margin-top: 0.33rem;"> Thank you for using our services.</p>
       </div>
@@ -104,7 +102,7 @@ async function check(req: Request, res: Response) {
 async function resetPassword(req: Request, res: Response) {
   try {
     const body = req.body;
-    const getUser = await AuthService.reset(req.body);
+    const getUser = await AuthService.user(req.body);
 
     const token = jwt.sign(getUser.id.toString(), process.env.JWT_SECRET);
     const fullUrl = req.protocol + "://" + req.get("host");
@@ -113,12 +111,11 @@ async function resetPassword(req: Request, res: Response) {
       from: '"Circle" <muhammadirfan2823@gmail.com>',
       to: getUser.email,
       subject: "Verification Link",
-      // html: `<a href="${fullUrl}/api/v1/auth/verify-email-reset-password?token=${token}">Klik untuk verifikasi email!</a>`,
       html: `
       <div style="background-color: #FFF; margin: auto; width: 50%; text-align: center; padding: 1rem; border-radius: 12px; font-family: Arial, Helvetica, sans-serif; color: black;">
-          <H1 style="color: #b91c1c; font-weight: bold;">Circle App</H1>
+          <H1 style="color: #04A51E; font-weight: bold;">Circle App</H1>
           <p style="font-size: 0.8rem;">Welcome to Circle!<br> Click the button below to verify your email</p>
-          <Button style="background-color: #b91c1c; border: none; border-radius: 12px; height: 40px; margin: 1rem;"><a style="text-decoration: none; color: white; margin: 0.5rem; font-size: 1rem;" href="${fullUrl}/api/v1/auth/verify-email-reset-password?token=${token}">Verify</a></Button>
+          <Button style="background-color: #04A51E; border: none; border-radius: 12px; height: 40px; margin: 1rem;"><a style="text-decoration: none; color: white; margin: 0.5rem; font-size: 1rem;" href="${fullUrl}/api/v1/auth/verify-email-reset-password?token=${token}">Verify</a></Button>
           <p style="font-size: 0.8rem;">Please ignore this message if you feel that you are not registering to our services.</p>
           <p style="font-size: 0.8rem; margin-top: 0.33rem;"> Thank you for using our services.</p>
       </div>
@@ -126,8 +123,6 @@ async function resetPassword(req: Request, res: Response) {
     });
 
     console.log("Message sent: %s", info.messageId);
-
-    await AuthService.createVerification(token, "FORGOT_PASSWORD");
 
     const user = await authService.reset(body);
     res.status(200).json(user);

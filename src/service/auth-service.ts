@@ -1,10 +1,8 @@
 import { PrismaClient, VerificationType } from "@prisma/client";
-
 import { LoginDTO, registerDTO, ResetDTO } from "../dto/auth-dto";
 import { loginSchema, registerSchema } from "../validators/auth";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { transporter } from "../libs/nodemailer";
 
 const prisma = new PrismaClient();
 
@@ -117,10 +115,6 @@ async function verifyEmailForForgotPassword(token: string) {
     });
     const userId = jwt.verify(verification.token, process.env.JWT_SECRET);
 
-    // if (verification.type === "FORGOT_PASSWORD") {
-    //   return await prisma.user.update;
-    // }
-
     return await prisma.user.update({
       data: {
         isVerifiedEmail: true,
@@ -148,11 +142,25 @@ async function reset(dto: ResetDTO) {
       user.password = hashedPassword;
     }
 
-    return await prisma.user.update({
-      where: { email: String(dto.email) },
-      data: {
-        password: user.password,
-        isVerifiedEmail: false,
+    if (user.isVerifiedEmail == true) {
+      return await prisma.user.update({
+        where: { email: String(dto.email) },
+        data: {
+          password: user.password,
+          isVerifiedEmail: false,
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function user(dto: ResetDTO) {
+  try {
+    return await prisma.user.findFirst({
+      where: {
+        email: String(dto.email),
       },
     });
   } catch (error) {
@@ -167,4 +175,5 @@ export default {
   createVerification,
   reset,
   verifyEmailForForgotPassword,
+  user,
 };

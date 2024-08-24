@@ -186,7 +186,6 @@ async function reply(req: Request, res: Response) {
       user.id,
       body
     );
-    console.log("string", replyThread);
 
     return res.status(201).json(replyThread);
   } catch (error) {

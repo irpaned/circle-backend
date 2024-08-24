@@ -13,7 +13,6 @@ async function ReplyThread(
   try {
     // validate
     const validate = replyThreadSchemaJoi.validate(dto);
-    console.log("hit");
 
     if (validate.error) {
       console.log("error");
