@@ -105,7 +105,7 @@ async function create(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const { id } = req.params;
-
+    const user = res.locals.user;
     const thread = await ThreadService.findOne(Number(id));
 
     if (!thread)
@@ -113,7 +113,11 @@ async function update(req: Request, res: Response) {
         message: "Thread not found!",
       });
 
-    const updatedThread = await ThreadService.update(Number(id), req.body);
+    const updatedThread = await ThreadService.update(
+      Number(id),
+      req.body,
+      user.id
+    );
     res.json(updatedThread);
   } catch (error) {
     res.status(500).json({
