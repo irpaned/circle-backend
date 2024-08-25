@@ -125,6 +125,7 @@ routerv1.get(
 // USER
 routerv1.get("/user/:id", UserController.findOneProfile);
 routerv1.get("/users", authenticate, UserController.find);
+routerv1.get("/users-2", authenticate, UserController.findMany);
 routerv1.patch(
   "/user/:id",
   upload.single("photoProfile"),

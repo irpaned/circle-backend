@@ -1,31 +1,50 @@
 import { Request, Response } from "express";
 import UserService from "../service/user-service";
 import FollowService from "../service/follow-service";
+import userService from "../service/user-service";
 
 async function find(req: Request, res: Response) {
-  const userLogged = res.locals.user;
-
   try {
-    const user = res.locals.user;
+    const userLogged = res.locals.user;
+    // const user = res.locals.user;
     const search = req.query.search as string; //  bikin const ( query string step 1)
-    const users = await UserService.find(search, user.id);
-    const newUser = users.map((user) => {
-      const followers = user.followers;
-      const followeds = user.followeds;
-      return {
-        ...user,
-        isFollowed: followeds.some(
-          (followed) => followed.followerId == userLogged.id
-        ),
-        isFollower: followers.some(
-          (follower) => follower.followerId == userLogged.id
-        ),
-      };
-    });
-
-    console.log(newUser);
+    const users = await UserService.find(search, userLogged.id);
+    const newUser = users
+      .filter((user) => user.id !== userLogged.id)
+      .map((user) => {
+        const followers = user.followers;
+        const followeds = user.followeds;
+        return {
+          ...user,
+          isFollowed: followeds.some(
+            (followed) => followed.followerId == userLogged.id
+          ),
+          isFollower: followers.some(
+            (follower) => follower.followerId == userLogged.id
+          ),
+        };
+      });
 
     return res.json(newUser);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+}
+
+async function findMany(req: Request, res: Response) {
+  try {
+    const data = await userService.findMany();
+    const loggedInUser = res.locals.user;
+
+    const sanitizedUsers = data
+      .filter((user) => user.id !== loggedInUser.id)
+      .map((user) => {
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
+    res.status(200).json(sanitizedUsers);
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -134,4 +153,5 @@ export default {
   getDataFollowers,
   getDataFollowings,
   CountDataFollowers,
+  findMany,
 };

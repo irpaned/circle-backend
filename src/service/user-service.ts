@@ -34,6 +34,13 @@ async function find(search: string, userId: number) {
   }
 }
 
+async function findMany() {
+  try {
+    const user = await prisma.user.findMany();
+    return user;
+  } catch (error) {}
+}
+
 async function findOneProfile(id: number) {
   try {
     const profile = await prisma.user.findFirst({
@@ -103,4 +110,4 @@ async function updateProfile(id: number, dto: editProfileDTO) {
   }
 }
 
-export default { find, updateProfile, findOneProfile };
+export default { find, updateProfile, findOneProfile, findMany };

@@ -142,11 +142,23 @@ async function update(id: number, dto: UpdateThreadDTO, userId: number) {
   }
 }
 
-async function remove(id: number) {
+async function remove(id: number, userId: number) {
   try {
-    return await prisma.thread.delete({
+    const thread = await prisma.thread.findFirst({
       where: { id: Number(id) },
     });
+
+    const user = await prisma.user.findFirst({
+      where: { id: Number(userId) },
+    });
+
+    if (thread.userId !== user.id) {
+      throw new Error("You can't delete thread other people");
+    } else {
+      return await prisma.thread.delete({
+        where: { id: Number(id) },
+      });
+    }
   } catch (error) {
     throw new String(error);
   }

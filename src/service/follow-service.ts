@@ -15,9 +15,10 @@ async function follow(followedId: number, followerId: number) {
       },
     });
 
-    if (targetUser === myUser) throw new Error("You can't follow yourself!");
+    if (targetUser.id === myUser.id)
+      throw new Error("You can't follow yourself!");
 
-    if (!targetUser || !myUser) throw new Error("User not found!");
+    if (!targetUser.id || !myUser.id) throw new Error("User not found!");
 
     const isFollowing = await prisma.follow.findFirst({
       where: {
