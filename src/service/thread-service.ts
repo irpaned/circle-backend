@@ -118,6 +118,7 @@ async function findDetailThread(id: number, userId: number) {
             userId: true,
             content: true,
             image: true,
+            createdAt: true,
             user: {
               select: {
                 likes: {
