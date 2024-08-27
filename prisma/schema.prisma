@@ -63,8 +63,11 @@ model Reply {
   thread   Thread? @relation(fields: [threadId], references: [id])
   threadId Int?
 
-  image   String?
-  content String
+  image        String?
+  content      String
+  photoProfile String?
+  userName     String?
+  fullName     String?
 
   createdAt DateTime @default(now())
   updateAt  DateTime @default(now())

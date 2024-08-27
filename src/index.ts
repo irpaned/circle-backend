@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import ThreadController from "./controllers/thread-controller";
@@ -41,15 +40,6 @@ app.use(
 );
 
 app.get("/", async (req: Request, res: Response) => {
-  const info = await transporter.sendMail({
-    from: '"Circle" <muhammadirfan2823@gmail.com>', // sender address
-    to: "muhammadirfann6644@gmail.com", // list of receivers
-    subject: "Kamu berhasil masuk ke halaman yang tidak berguna!", // Subject line
-    text: "apa ini? asdadsadaldka dadqlidqi hq", // plain text body
-    html: "<b>Follow instagram @irpaned</b>", // html body
-  });
-
-  console.log("Message sent: %s", info.messageId);
   res.send("Hello welcome to circle");
 });
 
@@ -67,26 +57,32 @@ routerv1.get(
   },
   ThreadController.find
 );
-routerv1.get("/threads/:id", authenticate, ThreadController.findOne);
+routerv1.get("/thread/:id", authenticate, ThreadController.findOne);
+routerv1.get(
+  "/detail-thread/:id",
+  authenticate,
+  ThreadController.findDetailThread
+);
 routerv1.get(
   "/threads/profile/:id",
   authenticate,
   ThreadController.findManyProfile
 );
-routerv1.delete("/threads/:id", authenticate, ThreadController.remove);
 routerv1.post(
   "/threads",
   authenticate,
   upload.single("image"),
   ThreadController.create
 );
-routerv1.patch("/threads/:id", authenticate, ThreadController.update);
+routerv1.patch("/thread/:id", authenticate, ThreadController.update);
 routerv1.post(
   "/threads/:id",
   authenticate,
   upload.single("image"),
   ThreadController.reply
 );
+routerv1.delete("/threads/:id", authenticate, ThreadController.remove);
+routerv1.patch("/threads/:id", authenticate, ThreadController.update);
 
 // LIKE
 routerv1.post("/like/:id", authenticate, ThreadController.like);

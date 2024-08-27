@@ -21,6 +21,7 @@ async function find(req: Request, res: Response) {
 
 async function findOne(req: Request, res: Response) {
   try {
+    // const user = res.locals.user;
     const { id } = req.params;
     const threads = await ThreadService.findOne(Number(id));
 
@@ -29,6 +30,22 @@ async function findOne(req: Request, res: Response) {
     }
 
     res.json(threads);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+async function findDetailThread(req: Request, res: Response) {
+  try {
+    const user = res.locals.user;
+    const { id } = req.params;
+    const threads = await ThreadService.findDetailThread(Number(id), user.id);
+
+    if (!threads) {
+      return res.status(404).json({ message: "Thread not found" });
+    }
+
+    res.status(200).json(threads);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -196,4 +213,5 @@ export default {
   like,
   unlike,
   reply,
+  findDetailThread,
 };

@@ -44,6 +44,17 @@ async function findOne(id: number) {
   try {
     const thread = await prisma.thread.findFirst({
       where: { id },
+      include: {
+        user: {
+          select: {
+            fullName: true,
+            photoProfile: true,
+            userName: true,
+          },
+        },
+        likes: true,
+        replies: true,
+      },
     });
 
     if (!thread) throw new String("Thread not found!");
@@ -51,6 +62,97 @@ async function findOne(id: number) {
     return thread;
   } catch (error) {
     throw new String(error);
+  }
+}
+
+// async function findDetailThread(id: number, userId: number) {
+//   try {
+//     const data = await prisma.thread.findUnique({
+//       where: {
+//         id,
+//       },
+//       include: {
+//         user: {
+//           select: {
+//             fullName: true,
+//             photoProfile: true,
+//             userName: true,
+//           },
+//         },
+//         likes: true,
+//         replies: true,
+//       },
+//     });
+
+//       return {
+//         ...thread,
+//         TotalLikes: thread.likes.length,
+//         isLiked: thread.likes.some((like) => like.userId === userId),
+//         TotalReplies: thread.replies.length,
+//         isReplied: thread.replies.some((replies) => replies.userId === userId),
+//       };
+
+//   } catch (error) {
+//     throw new String(error);
+//   }
+// }
+
+async function findDetailThread(id: number, userId: number) {
+  try {
+    const thread = await prisma.thread.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        user: {
+          select: {
+            fullName: true,
+            photoProfile: true,
+            userName: true,
+          },
+        },
+        likes: true,
+        replies: {
+          select: {
+            id: true,
+            userId: true,
+            content: true,
+            image: true,
+            user: {
+              select: {
+                likes: {
+                  select: {
+                    id: true,
+                    userId: true,
+                    threadId: true,
+                    createdAt: true,
+                    updateAt: true,
+                  },
+                },
+                fullName: true,
+                userName: true,
+                createdAt: true,
+                photoProfile: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!thread) {
+      return null;
+    }
+
+    return {
+      ...thread,
+      TotalLikes: thread.likes.length,
+      isLiked: thread.likes.some((like) => like.userId === userId),
+      TotalReplies: thread.replies.length,
+      isReplied: thread.replies.some((replies) => replies.userId === userId),
+    };
+  } catch (error) {
+    throw new Error(error.message);
   }
 }
 
@@ -171,4 +273,5 @@ export default {
   update,
   remove,
   findManyProfile,
+  findDetailThread,
 };
